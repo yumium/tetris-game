@@ -111,5 +111,4 @@ class TetrisGame:
             board (list of list of int): list of rows of the board
         '''
         self.board = board[::-1]
-        self.heights = [max([0] + [row+1 for row in range(len(self.board)) if self.board[row][col] == 1]) for col in range(self.board_width)]
-    
+        self.heights = [max([0] + [row+1 for row in range(len(self.board)) if self.board[row][col] == 1]) for col in range(self.board_width)] 
