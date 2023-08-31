@@ -1,24 +1,24 @@
 # PyTest file
 import sys
 sys.path.append('../')
-from TetrisGame import TetrisGame, DEFAULT_WIDTH
+from TetrisGame import TetrisGame
 from tetris import parse_sequence, simulate_game
 import pytest
 
 def test_add_empty():
     # setup
     board = []
-    heights = [0]*DEFAULT_WIDTH
     tetris = TetrisGame()
+    tetris._set_board(board)
 
     # execute
-    res = tetris.add('Q', 0, board, heights=heights)
+    tetris.add('Q', 0)
 
     # assert
-    assert res == [
+    assert tetris.board[::-1] == [
         [1,1,0,0,0,0,0,0,0,0],
         [1,1,0,0,0,0,0,0,0,0]
-    ]
+    ] and tetris.heights == [2,2,0,0,0,0,0,0,0,0]
 
 def test_add_stack():
     # setup
@@ -26,20 +26,19 @@ def test_add_stack():
         [1,1,0,0,0,0,0,0,0,0],
         [1,1,0,0,0,0,0,0,0,0]
     ]
-    heights = [2,2,0,0,0,0,0,0,0,0]
     tetris = TetrisGame()
+    tetris._set_board(board)
 
     # execute
-    res = tetris.add('Q', 1, board, heights=heights)
-    print(res)
+    tetris.add('Q', 1)
 
     # assert
-    assert res == [
+    assert tetris.board[::-1] == [
         [0,1,1,0,0,0,0,0,0,0],
         [0,1,1,0,0,0,0,0,0,0],
         [1,1,0,0,0,0,0,0,0,0],
         [1,1,0,0,0,0,0,0,0,0]
-    ]
+    ] and tetris.heights == [2,4,4,0,0,0,0,0,0,0]
 
 def test_add_clear_line():
     # setup
@@ -47,17 +46,17 @@ def test_add_clear_line():
         [1,1,1,1,1,1,1,1,0,0],
         [1,1,1,1,1,1,1,1,0,0]
     ]
-    heights = [2,2,2,2,2,2,2,2,0,0]
     tetris = TetrisGame()
+    tetris._set_board(board)
 
     # execute
-    res = tetris.add('J', 8, board, heights=heights)
+    tetris.add('J', 8)
 
     # assert
-    assert res == [
+    assert tetris.board[::-1] == [
         [0,0,0,0,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,0,1]
-    ]
+    ] and tetris.heights == [1,1,1,1,1,1,1,1,0,2]
 
 def test_add_clear_line_multiple():
     # setup
@@ -65,22 +64,23 @@ def test_add_clear_line_multiple():
         [1,1,1,1,1,1,1,1,0,0],
         [1,1,1,1,1,1,1,1,0,0]
     ]
-    heights = [2,2,2,2,2,2,2,2,0,0]
     tetris = TetrisGame()
+    tetris._set_board(board)
 
     # execute
-    res = tetris.add('Q', 8, board, heights=heights)
+    tetris.add('Q', 8)
 
     # assert
-    assert res == []
+    assert tetris.board[::-1] == [] and tetris.heights == [0,0,0,0,0,0,0,0,0,0]
 
 def test_get_height_empty():
     # setup
     tetris = TetrisGame()
     board = []
+    tetris._set_board(board)
 
     # execute
-    res = tetris.get_height(board)
+    res = tetris.get_height()
 
     # assert
     assert res == 0
@@ -91,9 +91,10 @@ def test_get_height_single():
     board = [
         [1,1,0,0,0,0,0,0,0,0]
     ]
+    tetris._set_board(board)
 
     # execute
-    res = tetris.get_height(board)
+    res = tetris.get_height()
 
     # assert
     assert res == 1
@@ -105,9 +106,10 @@ def test_get_height_multiple():
         [1,1,0,0,0,0,0,0,0,0],
         [1,1,0,0,0,0,0,0,0,0]
     ]
+    tetris._set_board(board)
 
     # execute
-    res = tetris.get_height(board)
+    res = tetris.get_height()
 
     # assert
     assert res == 2
@@ -115,14 +117,15 @@ def test_get_height_multiple():
 def test__lock_empty():
     # setup
     tetris = TetrisGame()
-    heights = [0]*DEFAULT_WIDTH
     piece = [
         [1,1],
         [1,1]
     ]
+    board = []
+    tetris._set_board(board)
 
     # execute
-    res = tetris._lock(piece, 0, heights)
+    res = tetris._lock(piece, 0)
 
     # assert
     assert res == 1
@@ -130,14 +133,15 @@ def test__lock_empty():
 def test__lock_stack():
     # setup
     tetris = TetrisGame()
-    heights = [1,1,0,0,0,0,0,0,0,0]
     piece = [
         [0,1,1],
         [1,1,0]
     ]
+    board = [[1,1,0,0,0,0,0,0,0,0]]
+    tetris._set_board(board)
 
     # execute
-    res = tetris._lock(piece, 1, heights)
+    res = tetris._lock(piece, 1)
 
     # assert
     assert res == 2
@@ -145,14 +149,18 @@ def test__lock_stack():
 def test__lock_fit():
     # setup
     tetris = TetrisGame()
-    heights = [2,1,2,0,0,0,0,0,0,0]
     piece = [
         [1,1,1],
         [0,1,0]
     ]
+    board = [
+        [1,0,1,0,0,0,0,0,0,0],
+        [1,1,1,0,0,0,0,0,0,0]
+    ]
+    tetris._set_board(board)
 
     # execute
-    res = tetris._lock(piece, 0, heights)
+    res = tetris._lock(piece, 0)
 
     # assert
     assert res == 2
