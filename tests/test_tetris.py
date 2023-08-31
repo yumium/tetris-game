@@ -201,4 +201,4 @@ def test_tetris_game(sequence, ans):
     res = simulate_game(parse_sequence(sequence))
 
     # assert
-    res == ans
+    assert res == ans
