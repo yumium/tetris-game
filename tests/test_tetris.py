@@ -1,7 +1,8 @@
 # PyTest file
 import sys
 sys.path.append('../')
-from tetris import TetrisGame, DEFAULT_WIDTH, parse_sequence, simulate_game
+from TetrisGame import TetrisGame, DEFAULT_WIDTH
+from tetris import parse_sequence, simulate_game
 import pytest
 
 def test_add_empty():
