@@ -62,11 +62,6 @@ And `output.txt` should contain the corresponding resulting heights:
 To run the unit tests you will have to install [pytest](https://docs.pytest.org/en/7.1.x/index.html). Then simply:
 ```shell
 cd tests
-python -m pytest .\test_tetris.py
-```
-
-To visualise the test coverage you will have to additionally install [pytest-cov](https://pypi.org/project/pytest-cov/). Then simply: 
-```shell
-py.test --cov tetris --cov-report html --cov-branch .\test_tetris.py
+python -m pytest ./test_tetris.py
 ```
 
